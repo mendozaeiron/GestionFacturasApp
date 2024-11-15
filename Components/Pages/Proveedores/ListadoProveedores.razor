@@ -1,0 +1,64 @@
+﻿@page "/proveedores/index"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navigationManager
+
+<h3>Listado de Proveedores</h3>
+
+@if (proveedores != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Ciudad</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proveedor in proveedores)
+            {
+                <tr>
+                    <td>@proveedor.IdProveedor</td>
+                    <td>@proveedor.NombreProveedor</td>
+                    <td>@proveedor.CiudadProveedor</td>
+                    <td>@proveedor.FonoProveedor</td>
+
+                    <td>
+                        <button class="btn btn-primary" @onclick="@(() => VerProveedor(proveedor.IdProveedor))">Detalles</button>
+                        <button class="btn btn-secondary" @onclick="@(() => EditarProveedor(proveedor.IdProveedor))">Editar</button>
+                        <button class="btn btn-danger" @onclick="@(() => EliminarProveedor(proveedor.IdProveedor))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Proveedor> proveedores;
+
+    protected override async Task OnInitializedAsync()
+    {
+        proveedores = await dbContext.Proveedores.ToListAsync();
+    }
+
+    private void VerProveedor(int id)
+    {
+        navigationManager.NavigateTo($"/proveedores/details/{id}");
+    }
+
+    private void EditarProveedor(int id)
+    {
+        navigationManager.NavigateTo($"/proveedores/edit/{id}");
+    }
+
+    private void EliminarProveedor(int id)
+    {
+        navigationManager.NavigateTo($"/proveedores/delete/{id}");
+    }
+}

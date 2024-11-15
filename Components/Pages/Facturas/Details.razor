@@ -1,0 +1,72 @@
+﻿@page "/facturas/details/{id:int}"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext dbContext
+
+<h3>Detalles de la Factura</h3>
+
+@if (factura != null)
+{
+    <dl class="row">
+        <dt class="col-sm-2">Glosa Factura:</dt>
+        <dd class="col-sm-10">@factura.GlosaFactura</dd>
+
+        <dt class="col-sm-2">Fecha:</dt>
+        <dd class="col-sm-10">@factura.FechaFactura.ToString("dd/MM/yyyy")</dd>
+
+        <dt class="col-sm-2">Estado:</dt>
+        <dd class="col-sm-10">@factura.IdEstadoFactura</dd>
+
+        <dt class="col-sm-2">Exenta IVA:</dt>
+        <dd class="col-sm-10">@factura.ExentaIVA</dd>
+
+        <dt class="col-sm-2">Proveedor:</dt>
+        <dd class="col-sm-10">@factura.IdProveedor</dd>
+    </dl>
+
+    <h4>Detalles de los Items</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detalle in factura.FacturaDetalles)
+            {
+                <tr>
+                    <td>@detalle.NroItem</td>
+                    <td>@detalle.CodigoItem</td>
+                    <td>@detalle.NombreItem</td>
+                    <td>@detalle.UnidadItem</td>
+                    <td>@detalle.CantidadItem</td>
+                    <td>@detalle.PrecioUnitarioItem</td>
+                    <td>@detalle.SubTotalItem</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private FacturaCabecera factura;
+
+    protected override async Task OnInitializedAsync()
+    {
+        factura = await dbContext.FacturasCabecera
+            .Include(f => f.FacturaDetalles)
+            .FirstOrDefaultAsync(f => f.IdFactura == id);
+    }
+}
+
+
+
+

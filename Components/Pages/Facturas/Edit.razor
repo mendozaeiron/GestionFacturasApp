@@ -1,0 +1,55 @@
+﻿@page "/facturas/edit/{id:int}"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navigationManager
+
+<h3>Editar Factura</h3>
+
+<EditForm Model="@factura" OnValidSubmit="EditarFactura" FormName="FacturaEditForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="glosa" class="form-label">Glosa Factura</label>
+        <InputText id="glosa" class="form-control" @bind-Value="factura.GlosaFactura" />
+    </div>
+
+    <div class="mb-3">
+        <label for="fecha" class="form-label">Fecha</label>
+        <InputDate id="fecha" class="form-control" @bind-Value="factura.FechaFactura" />
+    </div>
+
+    <div class="mb-3">
+        <label for="estado" class="form-label">Estado</label>
+        <InputSelect id="estado" class="form-control" @bind-Value="factura.IdEstadoFactura">
+            <option value="1">Borrador</option>
+            <option value="2">Enviada</option>
+            <option value="3">Aceptada</option>
+            <option value="4">Aceptada con observaciones</option>
+            <option value="5">Rechazada</option>
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private FacturaCabecera factura;
+
+    protected override async Task OnInitializedAsync()
+    {
+        factura = await dbContext.FacturasCabecera.FindAsync(id);
+    }
+
+    private async Task EditarFactura()
+    {
+        dbContext.FacturasCabecera.Update(factura);
+        await dbContext.SaveChangesAsync();
+        navigationManager.NavigateTo("/facturas/index");
+    }
+}
+
+
+

@@ -1,0 +1,36 @@
+﻿@page "/proveedores/delete/{id:int}"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navigationManager
+
+<h3>Eliminar Proveedor</h3>
+
+<p>¿Está seguro que desea eliminar este proveedor?</p>
+
+<button class="btn btn-danger" @onclick="EliminarProveedor">Eliminar</button>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Proveedor proveedor;
+
+    protected override async Task OnInitializedAsync()
+    {
+        proveedor = await dbContext.Proveedores.FindAsync(id);
+    }
+
+    private async Task EliminarProveedor()
+    {
+        var facturasAsociadas = dbContext.FacturasCabecera.Any(f => f.IdProveedor == proveedor.IdProveedor);
+        if (!facturasAsociadas)  // Solo eliminar si no tiene facturas asociadas
+        {
+            dbContext.Proveedores.Remove(proveedor);
+            await dbContext.SaveChangesAsync();
+            navigationManager.NavigateTo("/proveedores/index");
+        }
+    }
+}
+
+
+
+

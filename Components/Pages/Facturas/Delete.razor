@@ -1,0 +1,35 @@
+﻿@page "/facturas/delete/{id:int}"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navigationManager
+
+<h3>Eliminar Factura</h3>
+
+<p>¿Está seguro que desea eliminar esta factura?</p>
+
+<button class="btn btn-danger" @onclick="EliminarFactura">Eliminar</button>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private FacturaCabecera factura;
+
+    protected override async Task OnInitializedAsync()
+    {
+        factura = await dbContext.FacturasCabecera.FindAsync(id);
+    }
+
+    private async Task EliminarFactura()
+    {
+        if (factura.IdEstadoFactura == 1)  // Solo eliminar si es Borrador
+        {
+            dbContext.FacturasCabecera.Remove(factura);
+            await dbContext.SaveChangesAsync();
+            navigationManager.NavigateTo("/facturas/index");
+        }
+    }
+}
+
+
+
+

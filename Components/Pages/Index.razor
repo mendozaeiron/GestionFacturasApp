@@ -1,0 +1,66 @@
+﻿@page "/"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navigationManager
+
+<h3>Listado de Facturas</h3>
+
+@if (facturas != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Glosa</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Proveedor</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var factura in facturas)
+            {
+                <tr>
+                    <td>@factura.IdFactura</td>
+                    <td>@factura.GlosaFactura</td>
+                    <td>@factura.FechaFactura.ToString("dd/MM/yyyy")</td>
+                    <td>@factura.IdEstadoFactura</td>
+                    <td>@factura.IdProveedor</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="@(() => VerFactura(factura.IdFactura))">Detalles</button>
+                        <button class="btn btn-secondary" @onclick="@(() => EditarFactura(factura.IdFactura))">Editar</button>
+                        <button class="btn btn-danger" @onclick="@(() => EliminarFactura(factura.IdFactura))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<FacturaCabecera> facturas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        facturas = await dbContext.FacturasCabecera.ToListAsync();
+    }
+
+    private void VerFactura(int id)
+    {
+        navigationManager.NavigateTo($"/facturas/details/{id}");
+    }
+
+    private void EditarFactura(int id)
+    {
+        navigationManager.NavigateTo($"/facturas/edit/{id}");
+    }
+
+    private void EliminarFactura(int id)
+    {
+        navigationManager.NavigateTo($"/facturas/delete/{id}");
+    }
+}
+

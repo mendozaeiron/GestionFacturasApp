@@ -1,0 +1,60 @@
+﻿@page "/proveedores/create"
+@using GestionFacturasApp.Data
+@using GestionFacturasApp.Models
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navigationManager
+
+<h3>Crear Nuevo Proveedor</h3>
+
+<EditForm Model="@proveedor" OnValidSubmit="CrearProveedor" FormName="ProveedorForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre Proveedor</label>
+        <InputText id="nombre" class="form-control" @bind-Value="proveedor.NombreProveedor" />
+    </div>
+
+    <div class="mb-3">
+        <label for="comuna" class="form-label">Comuna</label>
+        <InputText id="comuna" class="form-control" @bind-Value="proveedor.ComunaProveedor" />
+    </div>
+
+    <div class="mb-3">
+        <label for="ciudad" class="form-label">Ciudad</label>
+        <InputText id="ciudad" class="form-control" @bind-Value="proveedor.CiudadProveedor" />
+    </div>
+
+    <div class="mb-3">
+        <label for="fono" class="form-label">Teléfono</label>
+        <InputText id="fono" class="form-control" @bind-Value="proveedor.FonoProveedor" />
+    </div>
+
+    <div class="mb-3">
+        <label for="rut" class="form-label">RUT</label>
+        <InputText id="rut" class="form-control" @bind-Value="proveedor.RutProveedor" />
+    </div>
+
+    <div class="mb-3">
+        <label for="giro" class="form-label">Giro</label>
+        <InputText id="giro" class="form-control" @bind-Value="proveedor.GiroProveedor" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Crear</button>
+</EditForm>
+
+@code {
+    private Proveedor proveedor = new Proveedor { NombreProveedor ="NombrePrueba7", ComunaProveedor="Comuna de Prueba4", CiudadProveedor="Ciudad Prueba 4", FonoProveedor="23456789", RutProveedor="123456789-0", GiroProveedor="GiroPRueba4"};
+
+    private async Task CrearProveedor()
+    {
+        dbContext.Proveedores.Add(proveedor);
+        await dbContext.SaveChangesAsync();
+        navigationManager.NavigateTo("/index");
+    }
+}
+
+
+
+
+
